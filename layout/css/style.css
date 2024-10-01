@@ -1,0 +1,234 @@
+body{
+    margin:0px;
+    color:white;
+    font-size:13px;
+    background-position:fixed;
+    background-repeat:no-repeat;
+    background-color:rgb(14, 14, 13);
+    background-image:url(../images/background.jpg);
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.header-content{
+    width:100%;
+    position:relative;
+    padding:5px 0px 0px;
+    background-color:rgb(7, 7, 7);
+}
+.image-logo{
+    margin-left:5px;
+}
+
+.content-presentation{
+    width:500px;
+    height:389px;
+    margin-top:13%;
+    font-size:15px;
+    margin-left:40px;
+    position:relative;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+.content-presentation p{
+    font-size:25px;
+}
+
+.image-profile{
+    width:150px;
+    margin-top:20px;
+    margin-left:40%;
+}
+
+.button-presentation{
+    margin:5px;
+    width:100px;
+    cursor:pointer;
+    text-align:center;
+    border-radius:5px;
+    transition:all 0.5s;
+    text-decoration:none;
+    border:1px solid gray;
+}
+.button-presentation span{
+    color:white;
+    cursor:pointer;
+    transition:0.5s;
+    position:relative;
+    display:inline-block;
+}
+.button-presentation span:after{
+    top:0;
+    opacity:0;
+    right:-20px;
+    content:'\00bb';
+    transition:0.5s;
+    position:absolute;
+}
+.button-presentation:hover span{
+    padding-right:25px;
+}
+.button-presentation:hover span:after{
+    right:0;
+    opacity:1;
+}
+
+.profile-button{
+    top:-7px;
+    color:white;
+    cursor:pointer;
+    font-size:25px;
+    margin-left:80%;
+}
+.profile-link{
+    position:relative;
+    display:inline-block;
+}
+.profile-link-content{
+    z-index:1;
+    display:none;
+    font-size:14px;
+    min-width:150px;
+    margin-left:0px;
+    position:absolute;
+    background-color:rgb(10, 10, 10);
+}
+.profile-link-content a{
+    display:block;
+    color:white;
+    padding:12px 16px;
+    text-decoration:none;
+}
+.profile-button:hover{
+    background-color:rgb(29, 90, 188);
+}
+.profile-link-content a:hover{
+    background-color:rgb(29, 90, 188);
+}
+.profile-link:hover .profile-link-content{
+    display:block;
+}
+
+.contentDiv{
+    width:60%;
+    height:80%;
+    margin-top:30px;
+    margin-left:20%;
+    padding-top:1px;
+    border-radius:10px;
+    background-color:rgb(8, 8, 8);
+}
+.contentLogin{
+    width:35%;
+    height:40%;
+    margin-left:32%;
+    border-radius:10px;
+    background-color:rgb(14, 14, 14)
+}
+.contentLogin label{
+    display:flex;
+    color:white;
+    font-size:14px;
+    padding:5px 0px 5px;
+    justify-content:center;
+}
+.contentLogin input{
+    width:90%;
+    border:none;
+    border-radius:5px;
+    padding:5px 0 5px;
+    margin:5px 0 5px;
+}
+.contentLogin button{
+    border:none;
+    margin-top:10%;
+    margin-left:40%;
+    padding:5px 10px 5px;
+}
+
+.contentRegister{
+    width:60%;
+    height:60%;
+    margin-left:20%;
+    border-radius:10px;
+    background-color:rgb(14, 14, 14);
+}
+.contentRegisterRight{
+    padding:5px;
+    margin-left:10px;
+}
+.contentRegisterLeft{
+    margin-top:-40.5%;
+    margin-left:55%;
+}
+.contentRegisterRight label{
+    color:white;
+    font-size:14px;
+}
+.contentRegisterRight input{
+    width:30%;
+    border:none;
+    border-radius:5px;
+    padding:8px 0 8px;
+    text-align:center;
+}
+.contentRegisterLeft label{
+    color:white;
+    font-size:14px;
+}
+.contentRegisterLeft input{
+    width:64%;
+    border:none;
+    border-radius:5px;
+    padding:8px 0 8px;
+    text-align:center;
+}
+.contentRegister button{
+    border:none;
+    margin-top:15px;
+    margin-left:36%;
+    padding:5px 10px 5px;
+}
+
+.create-account{
+    margin-top:10px;
+    margin-left:70%;
+    text-decoration:none;
+}
+
+.boxSuccess{
+    border:2px solid #28a745;
+    border-radius:5px;
+    background-color:#d4edda;
+    color:#155724;
+    padding:10px;
+    margin-bottom:10px;
+}
+
+.boxWarning{
+    border:2px solid #ffc107;
+    border-radius:5px;
+    background-color:#fff3cd;
+    color:#856404;
+    padding:10px;
+    margin-bottom:10px;
+}
+
+.boxError{
+    border:2px solid #dc3545;
+    border-radius:5px;
+    background-color:#f8d7da;
+    color:#721c24;
+    padding:10px;
+    margin-bottom:10px;
+}
+
+.footer{
+    padding:5px;
+    color:white;
+    font-size:14px;
+    margin-top:30px;
+    position:relative;
+    text-align:center;
+    text-decoration:none;
+    background-color:rgb(7, 7, 7);
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+}
