@@ -1,5 +1,31 @@
 <?php
     require("../database/db.php");
+    $message = "";
+    $messageClass = "";
+
+    session_start();
+    if(isset($_SESSION["account_id"])){
+        header("Location: account.php");
+        exit();
+    }
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $username = mysqli_real_escape_string($conn, $_POST['accountName']);
+        $password = mysqli_real_escape_string($conn, $_POST['accountPassw']);
+    
+        $sql = ("SELECT * FROM accounts WHERE account_name = '$username' and account_passw = '$password'");
+        $result = mysqli_query($conn, $sql);
+    
+        if (mysqli_num_rows($result) > 0) {
+            $account = mysqli_fetch_assoc($result);
+            $_SESSION["account_id"] = $account["account_id"];
+
+            header("Location: account.php");
+            exit();
+        } else {
+            $message = "Usuário ou senha inválida!";
+            $messageClass = "boxError";
+        }
+    }
 ?>
 
 <html lang="pt-BR">
@@ -39,9 +65,9 @@
                     <input type="password" name="accountName" id="accountName" required> 
                     <i id="eye-account" class="bi-eye-fill" onclick="hideShow('accountName', 'eye-account')"></i>
                         
-                    <label for="password">Password:</label>
-                    <input type="password" name="password" id="password" required> 
-                    <i id="eye-password" class="bi-eye-fill" onclick="hideShow('password', 'eye-password')"></i>
+                    <label for="accountPassw">Password:</label>
+                    <input type="password" name="accountPassw" id="accountPassw" required> 
+                    <i id="eye-password" class="bi-eye-fill" onclick="hideShow('accountPassw', 'eye-password')"></i>
                         
                     <button type="submit" id="submitLogin" value="submitLogin">Entrar</button>
                     <a href="register.php" class="create-account"><span>Criar Conta</span></a>

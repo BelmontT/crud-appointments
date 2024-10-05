@@ -1,5 +1,21 @@
 <?php
     require("../database/db.php");
+    $message = "";
+    $messageClass = "";
+
+    session_start();
+    if(!isset($_SESSION["account_id"])){
+        header("Location: login.php");
+        exit();
+    } else {
+        $data = $_SESSION['account_id'];
+        $query = ("SELECT * FROM users WHERE account_id = '$data'");
+        $result = mysqli_query($conn, $query);
+        $user = mysqli_fetch_assoc($result);
+
+        $message = "Login efetuado!";
+        $messageClass = "boxSuccess";
+    }
 ?>
 
 <html lang="pt-BR">
@@ -25,9 +41,64 @@
             </div>
         </div>
     </header>
-    <body>
-        <h1>Seja bem-vindo(a) a sua conta <?php echo htmlspecialchars($user['user_name']); ?>!</h1><br>
-        <a href="logout.php">Sair da conta</a>
+    <body onload="hideMessage()">
+        <div class="contentDiv">
+            <?php if(!empty($message)): ?>
+                <div id="messageBox" class="<?php echo $messageClass; ?>">
+                    <?php echo $message; ?>
+                </div>
+            <?php endif; ?>
+            <a href="logout.php" class="logout">Sair</a>
+            <img src="../layout/images/profile_account.png" class="image-profile">
+            <center>Seja bem-vindo(a) a sua conta <?php echo htmlspecialchars($user["user_name"]);?>!</center><br>
+            <center><caption>Dados Pessoais</caption></center>
+            <table class="tableAccount">
+                <thead>
+                    <tr>
+                        <th>Cargo</th>
+                        <th>Nome</th>
+                        <th>Data de Nascimento</th>
+                        <th>E-mail</th>
+                        <th>Telefone</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><?php echo htmlspecialchars($user["user_group"]);?></td>
+                        <td><?php echo htmlspecialchars($user["user_name"]);?></td>
+                        <td><?php echo htmlspecialchars($user["user_date_birth"]);?></td>
+                        <td><?php echo htmlspecialchars($user["user_email"]);?></td>
+                        <td><?php echo htmlspecialchars($user["user_phone"]);?></td>
+                        <td><a href="edit.php"><i class="bi-wrench" style="color:white;"></i></a></td>
+                    </tr>
+                </tbody>
+            </table><br>
+
+            <center><caption>Agendamentos</caption></center>
+            <table class="tableAppointments">
+                <thead>
+                    <tr>
+                        <th>Personal</th>
+                        <th>Data</th>
+                        <th>Horário</th>
+                        <th>Treino</th>
+                        <th>Status</th>
+                        <th>Baixar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Marcola</td>
+                        <td>01/10/2024</td>
+                        <td>22:30</td>
+                        <td>Perder KG</td>
+                        <td>Pendente</td>
+                        <td><a href="download.php"><i class="bi-file-earmark-arrow-down" style="color:white;"></i></a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </body>
     <div class="footer">
         © Todos os direitos reservados.

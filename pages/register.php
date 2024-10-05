@@ -1,5 +1,58 @@
 <?php
     require("../database/db.php");
+    $message = "";
+    $messageClass = "";
+
+    session_start();
+    if($_SERVER["REQUEST_METHOD"] == "POST"){
+        $collectDataAccount = [];
+        $collectDataUser = [];
+
+        if(!empty($_POST["accountName"])){
+            $accountName = mysqli_real_escape_string($conn, $_POST["accountName"]);
+            $collectDataAccount[] = "accountName = '$accountName'";
+        }
+        if(!empty($_POST["password"])){
+            $password = mysqli_real_escape_string($conn, $_POST["password"]);
+            $collectDataAccount[] = "password = '$password'";
+        }
+        if(!empty($_POST["userName"]) && !empty($_POST["userSurname"])){
+            $userName = mysqli_real_escape_string($conn, $_POST["userName"] . ' ' . $_POST["userSurname"]);
+            $collectDataUser[] = "userName = '$userName'";
+        }
+        if(!empty($_POST["userEmail"])){
+            $userEmail = mysqli_real_escape_string($conn, $_POST["userEmail"]);
+            $collectDataUser[] = "userEmail = '$userEmail'";
+        }
+        if(!empty($_POST["userPhone"])){
+            $userPhone = mysqli_real_escape_string($conn, $_POST["userPhone"]);
+            $collectDataUser[] = "userPhone = '$userPhone'";
+        }
+        if(!empty($_POST["userWeight"])){
+            $userWeight = mysqli_real_escape_string($conn, $_POST["userWeight"]);
+            $collectDataUser[] = "userWeight = '$userWeight'";
+        }
+        if(!empty($_POST["userHeight"])){
+            $userHeight = mysqli_real_escape_string($conn, $_POST["userHeight"]);
+            $collectDataUser[] = "userHeight = '$userHeight'";
+        }
+
+        if(!empty($collectDataAccount) && !empty($collectDataUser)){
+            $queryRegisterAccount = "INSERT INTO accounts (`account_name`, `account_passw`, `account_created`) VALUES ('$accountName', '$password', NOW())";
+            $queryRegisterUser = "INSERT INTO users (`user_name`, `user_group`, `user_date_birth`, `user_email`, `user_phone`) VALUES ('$userName', 'Comum', NOW(), '$userEmail', '$userPhone')";
+            if(mysqli_query($conn, $queryRegisterAccount) && mysqli_query($conn, $queryRegisterUser)){
+                $message = "Sua conta foi criada com sucesso!";
+                $messageClass = "boxSuccess";
+                header("Location: account.php");
+            } else {
+                $message = "Algo deu errado, mensagem do erro: " . mysqli_error($conn);
+                $messageClass = "boxError";
+            }
+        } else {
+            $message = "Sua conta não foi criada, verifique os campos ou contate um Administrador!";
+            $messageClass = "boxWarning";
+        }
+    }
 ?>
 
 <html lang="pt-BR">
@@ -33,13 +86,14 @@
                 <form action="" method="POST">
                     <div class="contentRegisterRight">
                         <label for="accountName">Usuário:</label><span style="font-size:10px; color:red; margin:0px 5px 0px;">*</span><br>
-                        <input type="password" name="accountName" id="accountName" placeholder="Conta" required><br>
+                        <input type="password" name="accountName" id="accountName" placeholder="Conta" required>
+                        <i id="registerName" class="bi-eye-fill" onclick="hideShow('accountName', 'registerName')"></i><br>
 
                         <label for="userName">Nome:</label><span style="font-size:10px; color:red; margin:0px 5px 0px;">*</span><br>
                         <input type="text" name="userName" id="userName" placeholder="Primeiro Nome" required><br>
                         
-                        <label for="email">E-mail:</label><span style="font-size:10px; color:red; margin:0px 5px 0px;">*</span><br>
-                        <input type="email" name="email" id="email" placeholder="Seu melhor e-mail" required><br>
+                        <label for="userEmail">E-mail:</label><span style="font-size:10px; color:red; margin:0px 5px 0px;">*</span><br>
+                        <input type="email" name="userEmail" id="userEmail" placeholder="Seu melhor e-mail" required><br>
 
                         <label for="userWeight">Peso:</label><span style="font-size:10px; color:red; margin:0px 5px 0px;">*</span><br>
                         <input type="number" name="userWeight" id="userWeight" placeholder="Seu peso" required><br>
@@ -47,13 +101,14 @@
 
                     <div class="contentRegisterLeft">
                         <label for="password">Senha:</label><span style="font-size:10px; color:red; margin:0px 5px 0px;">*</span><br>
-                        <input type="password" name="password" id="password" placeholder="Senha" required><br>
+                        <input type="password" name="password" id="password" placeholder="Senha" required>
+                        <i id="registerPassw" class="bi-eye-fill" onclick="hideShow('password', 'registerPassw')"></i><br>
 
-                        <label for="userSuname">Sobrenome:</label><span style="font-size:10px; color:red; margin:0px 5px 0px;">*</span><br>
-                        <input type="text" name="userSuname" id="userSuname" placeholder="Último Nome" required><br>
+                        <label for="userSurname">Sobrenome:</label><span style="font-size:10px; color:red; margin:0px 5px 0px;">*</span><br>
+                        <input type="text" name="userSurname" id="userSurname" placeholder="Último Nome" required><br>
 
-                        <label for="usarPhone">Telefone:</label><br>
-                        <input type="number" name="usarPhone" id="usarPhone" placeholder="Número de telefone"><br>
+                        <label for="userPhone">Telefone:</label><br>
+                        <input type="number" name="userPhone" id="userPhone" placeholder="Número de telefone"><br>
 
                         <label for="userHeight">Altura:</label><span style="font-size:10px; color:red; margin:0px 5px 0px;">*</span><br>
                         <input type="number" name="userHeight" id="userHeight" placeholder="Sua altura" required><br>
