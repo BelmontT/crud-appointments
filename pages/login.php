@@ -1,5 +1,5 @@
 <?php
-    require("../database/db.php");
+    require_once($_SERVER['DOCUMENT_ROOT'] . '/database/db.php');
     $message = "";
     $messageClass = "";
 
@@ -58,16 +58,16 @@
                     <?php echo $message; ?>
                 </div>
             <?php endif; ?>
+            <button onclick="history.back()" class="back"><i class="bi-reply" title="Voltar"></i></button>
             <img src="../layout/images/profile_login.png" class="image-profile">
             <div class="contentLogin">
                 <form action="" method="POST">
                     <label for="accountName">Usuário:</label>
-                    <input type="password" name="accountName" id="accountName" required> 
-                    <i id="eye-account" class="bi-eye-fill" onclick="hideShow('accountName', 'eye-account')"></i>
+                    <input type="text" name="accountName" id="accountName" required> 
                         
                     <label for="accountPassw">Password:</label>
                     <input type="password" name="accountPassw" id="accountPassw" required> 
-                    <i id="eye-password" class="bi-eye-fill" onclick="hideShow('accountPassw', 'eye-password')"></i>
+                    <i id="eye-password" class="bi-eye-fill" onclick="showHide('accountPassw', 'eye-password')"></i>
                         
                     <button type="submit" id="submitLogin" value="submitLogin">Entrar</button>
                     <a href="register.php" class="create-account"><span>Criar Conta</span></a>

@@ -1,5 +1,5 @@
 <?php
-    require("../database/db.php");
+    require_once($_SERVER['DOCUMENT_ROOT'] . '/database/db.php');
     $message = "";
     $messageClass = "";
 
@@ -96,7 +96,8 @@
                     <?php echo $message; ?>
                 </div>
             <?php endif; ?>
-            <a href="logout.php" class="logout">Sair</a>
+            <button onclick="history.back()" class="back"><i class="bi-reply" title="Voltar"></i></button>
+            <a href="logout.php" class="logout"><i class="bi-power" title="Sair"></i></a>
             <img src="../layout/images/profile_edit.png" class="image-profile">
             <center>Mantenha sua conta sempre segura, mude informações caso haja necessidade!</center>
             <div class="divFormEdit">

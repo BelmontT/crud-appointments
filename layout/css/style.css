@@ -119,7 +119,7 @@ body{
     height:40%;
     margin-left:32%;
     border-radius:10px;
-    background-color:rgb(14, 14, 14)
+    background-color:rgb(14, 14, 14);
 }
 .contentLogin label{
     display:flex;
@@ -205,13 +205,19 @@ body{
     margin-left:70%;
     text-decoration:none;
 }
+
+.back{
+    border:none;
+    color:white;
+    cursor:pointer;
+    font-size:20px;
+    background:none;
+    margin-left:96.3%;
+}
 .logout{
     color:white;
-    margin-left:95%;
-    border-radius:5px;
-    padding:3px 6px 3px;
-    text-decoration:none;
-    background-color:rgb(255, 144, 0)
+    font-size:20px;
+    margin-left:97%;
 }
 
 .boxSuccess{
@@ -247,11 +253,11 @@ body{
 }
 
 .tableAccount {
-    margin-left: 5%;
+    margin-left: 20%;
 }
 
 .tableAppointments {
-    margin-left: 5%;
+    margin-left: 20%;
 }
 
 .tableAccount thead, .tableAppointments thead{
@@ -281,6 +287,34 @@ body{
     margin-top:5px;
     position:absolute;
     margin-left:-15px;
+}
+
+button{
+    padding:5px;
+    border:none;
+    color:white;
+    cursor:pointer;
+    border-radius:5px;
+    text-decoration:none;
+    background-color:rgb(29, 90, 188);
+}
+button:hover{
+    background-color:rgb(18, 73, 161);
+}
+
+.newAppointments{
+    width:60%;
+    height:60%;
+    margin-left:20%;
+    border-radius:10px;
+    background-color:rgb(14, 14, 14);
+}
+.newAppointments input{
+    width:30%;
+    border:none;
+    border-radius:5px;
+    padding:8px 0 8px;
+    text-align:center;
 }
 
 .footer{

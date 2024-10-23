@@ -1,7 +1,5 @@
 <?php
-    require("../database/db.php");
-    $message = "";
-    $messageClass = "";
+    require_once($_SERVER['DOCUMENT_ROOT'] . '/database/db.php');
 
     session_start();
     if(!isset($_SESSION["account_id"])){
@@ -12,10 +10,27 @@
         $query = ("SELECT * FROM users WHERE account_id = '$data'");
         $result = mysqli_query($conn, $query);
         $user = mysqli_fetch_assoc($result);
-
-        $message = "Login efetuado!";
-        $messageClass = "boxSuccess";
     }
+
+    if($_SERVER["REQUEST_METHOD"] == "POST"){
+        $user_id = $_POST["user_id"];
+        $new_group = $_POST["user_group"];
+
+        if(isset($user_id, $new_group) && $user_id !== "" && $new_group !== ""){
+            $query = "UPDATE users SET user_group = '$new_group' WHERE user_id = '$user_id'";
+            if(mysqli_query($conn, $query)){
+                $message = "Cargo atribuído!";
+                $messageClass = "boxSuccess";
+            } else {
+                $message = "Erro ao atribuir o cargo! " . mysqli_error($conn);
+                $messageClass = "boxError";
+            }
+        } else {
+            $message = "Selecione pelo menos um usuário e um cargo!";
+            $messageClass = "boxWarning";
+        }
+    }
+    $userGroup = $user["user_group"];
 ?>
 
 <html lang="pt-BR">
@@ -48,14 +63,15 @@
                     <?php echo $message; ?>
                 </div>
             <?php endif; ?>
-            <a href="logout.php" class="logout">Sair</a>
+            <button onclick="history.back()" class="back"><i class="bi-reply" title="Voltar"></i></button>
+            <a href="logout.php" class="logout"><i class="bi-power" title="Sair"></i></a>
             <img src="../layout/images/profile_account.png" class="image-profile">
             <center>Seja bem-vindo(a) a sua conta <?php echo htmlspecialchars($user["user_name"]);?>!</center><br>
+            
             <center><caption>Dados Pessoais</caption></center>
             <table class="tableAccount">
                 <thead>
                     <tr>
-                        <th>Cargo</th>
                         <th>Nome</th>
                         <th>Data de Nascimento</th>
                         <th>E-mail</th>
@@ -65,39 +81,124 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><?php echo htmlspecialchars($user["user_group"]);?></td>
                         <td><?php echo htmlspecialchars($user["user_name"]);?></td>
                         <td><?php echo htmlspecialchars($user["user_date_birth"]);?></td>
                         <td><?php echo htmlspecialchars($user["user_email"]);?></td>
                         <td><?php echo htmlspecialchars($user["user_phone"]);?></td>
-                        <td><a href="edit.php"><i class="bi-wrench" style="color:white;"></i></a></td>
+                        <td><a href="edit.php"><i class="bi-pencil" style="color:white;"></i></a></td>
                     </tr>
                 </tbody>
             </table><br>
+            
+            <?php if($userGroup == $config["group"]["admin"]): ?>
+                <center><caption>Gerenciar Treinos</caption></center>
+                <table class="tableAppointments">
+                    <thead>
+                        <tr>
+                            <th>Aluno</th>
+                            <th>Data</th>
+                            <th>Horário</th>
+                            <th>Treino</th>
+                            <th>Status</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Emanuel</td>
+                            <td>01/10/2024</td>
+                            <td>22:30</td>
+                            <td>Perder KG</td>
+                            <td>Pendente</td>
+                            <td>
+                                <a href="appointments/confirm.php"><i class="bi-check" style="color:green; font-size:20px;"></i></a>
+                                <a href="appointments/cancel.php"><i class="bi-x" style="color:red; font-size:20px;"></i></a>
+                                <a href="appointments/delete.php"><i class="bi-trash" style="color:white; font-size:15px;"></i></a>
+                                <a href="appointments/edit.php"><i class="bi-pencil-square" style="color:white; font-size:15px; margin-left:4px;"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table><br>
 
-            <center><caption>Agendamentos</caption></center>
-            <table class="tableAppointments">
-                <thead>
-                    <tr>
-                        <th>Personal</th>
-                        <th>Data</th>
-                        <th>Horário</th>
-                        <th>Treino</th>
-                        <th>Status</th>
-                        <th>Baixar</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Marcola</td>
-                        <td>01/10/2024</td>
-                        <td>22:30</td>
-                        <td>Perder KG</td>
-                        <td>Pendente</td>
-                        <td><a href="download.php"><i class="bi-file-earmark-arrow-down" style="color:white;"></i></a></td>
-                    </tr>
-                </tbody>
-            </table>
+                <center><caption>Gerenciar Usuários</caption></center>
+                <center><form action="" method="POST">
+                    <select name="user_id">
+                        <option value="">Usuário</option>
+                        <?php
+                            $query = "SELECT account_id, user_name FROM users WHERE user_group <= 2";
+                            $result = mysqli_query($conn, $query);
+
+                            while($listUsers = mysqli_fetch_assoc($result)):
+                        ?>
+                        <option value="<?php echo $listUsers['account_id']; ?>">
+                            <?php echo htmlspecialchars($listUsers['user_name']); ?>
+                        </option>
+                        <?php endwhile; ?>
+                    </select>
+                
+                    <select name="user_group">
+                        <option value="">Cargo</option>
+                        <option value="1">Usuário</option>
+                        <option value="2">Personal</option>
+                    </select>
+                
+                    <button type="submit">Atribuir</button>
+                </center></form>
+
+            <?php elseif($userGroup == $config["group"]["personal"]): ?>
+                <center><caption>Gerenciar Treinos</caption></center>
+                <table class="tableAppointments">
+                    <thead>
+                        <tr>
+                            <th>Aluno</th>
+                            <th>Data</th>
+                            <th>Horário</th>
+                            <th>Treino</th>
+                            <th>Status</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Emanuel</td>
+                            <td>01/10/2024</td>
+                            <td>22:30</td>
+                            <td>Perder KG</td>
+                            <td>Pendente</td>
+                            <td><a href="appointments/confirm.php"><i class="bi-check" style="color:green; font-size:20px;"></i></a>
+                            <a href="appointments/cancel.php"><i class="bi-x" style="color:red; font-size:20px;"></i></a>
+                            <a href="appointments/delete.php"><i class="bi-trash" style="color:white; font-size:15px;"></i></a></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            <?php else: ?>
+                <center><caption>Seus Agendamentos</caption></center>
+                <table class="tableAppointments">
+                    <thead>
+                        <tr>
+                            <th>Personal</th>
+                            <th>Data</th>
+                            <th>Horário</th>
+                            <th>Treino</th>
+                            <th>Status</th>
+                            <th>Baixar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Belmont</td>
+                            <td>01/10/2024</td>
+                            <td>22:30</td>
+                            <td>Perder KG</td>
+                            <td>Pendente</td>
+                            <td><a href="download.php"><i class="bi-file-earmark-arrow-down" style="color:white;"></i></a></td>
+                        </tr>
+                    </tbody>
+                </table><br>
+
+                <center><a href="appointments/create.php"><button>Novo Agendamento</button></a></center>
+            <?php endif; ?>
         </div>
     </body>
     <div class="footer">

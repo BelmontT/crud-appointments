@@ -1,4 +1,4 @@
-function hideShow(inputId, iconId) {
+function showHide(inputId, iconId) {
     var input = document.getElementById(inputId);
     var icon = document.getElementById(iconId);
 

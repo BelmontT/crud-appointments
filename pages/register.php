@@ -1,5 +1,5 @@
 <?php
-    require("../database/db.php");
+    require_once($_SERVER['DOCUMENT_ROOT'] . '/database/db.php');
     $message = "";
     $messageClass = "";
 
@@ -39,13 +39,19 @@
 
         if(!empty($collectDataAccount) && !empty($collectDataUser)){
             $queryRegisterAccount = "INSERT INTO accounts (`account_name`, `account_passw`, `account_created`) VALUES ('$accountName', '$password', NOW())";
-            $queryRegisterUser = "INSERT INTO users (`user_name`, `user_group`, `user_date_birth`, `user_email`, `user_phone`) VALUES ('$userName', 'Comum', NOW(), '$userEmail', '$userPhone')";
-            if(mysqli_query($conn, $queryRegisterAccount) && mysqli_query($conn, $queryRegisterUser)){
-                $message = "Sua conta foi criada com sucesso!";
-                $messageClass = "boxSuccess";
-                header("Location: account.php");
+            if(mysqli_query($conn, $queryRegisterAccount)){
+                $accountID = mysqli_insert_id($conn);
+                $queryRegisterUser = "INSERT INTO users (`user_name`, `user_group`, `user_date_birth`, `user_email`, `user_phone`, `account_id`) VALUES ('$userName', 'Comum', NOW(), '$userEmail', '$userPhone', '$accountID')";
+                if(mysqli_query($conn, $queryRegisterUser)){         
+                    $message = "Sua conta foi criada com sucesso!";
+                    $messageClass = "boxSuccess";
+                    header("Location: account.php");
+                } else {
+                    $message = "Algo deu errado ao cadastrar o usuário, mensagem do erro: " . mysqli_error($conn);
+                    $messageClass = "boxError";
+                }
             } else {
-                $message = "Algo deu errado, mensagem do erro: " . mysqli_error($conn);
+                $message = "Algo deu errado ao cadastrar a conta, mensagem do erro: " . mysqli_error($conn);
                 $messageClass = "boxError";
             }
         } else {
@@ -80,37 +86,37 @@
     </header>
     <body>
         <div class="contentDiv">
+            <button onclick="history.back()" class="back"><i class="bi-reply" title="Voltar"></i></button>
             <img src="../layout/images/profile_register.png" class="image-profile">
             <div class="contentRegister">
                 <center>Se registre para ter acesso ao nosso conteúdo!<br>Insira seus dados verdadeiro para que possamos nos basear e criar sua planilha de treino.</center><br>
                 <form action="" method="POST">
                     <div class="contentRegisterRight">
-                        <label for="accountName">Usuário:</label><span style="font-size:10px; color:red; margin:0px 5px 0px;">*</span><br>
-                        <input type="password" name="accountName" id="accountName" placeholder="Conta" required>
-                        <i id="registerName" class="bi-eye-fill" onclick="hideShow('accountName', 'registerName')"></i><br>
+                        <label for="accountName">Usuário:</label> <span style="font-size:10px; color:red;">*</span><br>
+                        <input type="text" name="accountName" id="accountName" placeholder="Conta" required><br>
 
-                        <label for="userName">Nome:</label><span style="font-size:10px; color:red; margin:0px 5px 0px;">*</span><br>
+                        <label for="userName">Nome:</label> <span style="font-size:10px; color:red;">*</span><br>
                         <input type="text" name="userName" id="userName" placeholder="Primeiro Nome" required><br>
                         
-                        <label for="userEmail">E-mail:</label><span style="font-size:10px; color:red; margin:0px 5px 0px;">*</span><br>
+                        <label for="userEmail">E-mail:</label> <span style="font-size:10px; color:red;">*</span><br>
                         <input type="email" name="userEmail" id="userEmail" placeholder="Seu melhor e-mail" required><br>
 
-                        <label for="userWeight">Peso:</label><span style="font-size:10px; color:red; margin:0px 5px 0px;">*</span><br>
+                        <label for="userWeight">Peso:</label> <span style="font-size:10px; color:red;">*</span><br>
                         <input type="number" name="userWeight" id="userWeight" placeholder="Seu peso" required><br>
                     </div>
 
                     <div class="contentRegisterLeft">
-                        <label for="password">Senha:</label><span style="font-size:10px; color:red; margin:0px 5px 0px;">*</span><br>
+                        <label for="password">Senha:</label> <span style="font-size:10px; color:red;">*</span><br>
                         <input type="password" name="password" id="password" placeholder="Senha" required>
-                        <i id="registerPassw" class="bi-eye-fill" onclick="hideShow('password', 'registerPassw')"></i><br>
+                        <i id="registerPassw" class="bi-eye-fill" onclick="showHide('password', 'registerPassw')"></i><br>
 
-                        <label for="userSurname">Sobrenome:</label><span style="font-size:10px; color:red; margin:0px 5px 0px;">*</span><br>
+                        <label for="userSurname">Sobrenome:</label> <span style="font-size:10px; color:red;">*</span><br>
                         <input type="text" name="userSurname" id="userSurname" placeholder="Último Nome" required><br>
 
                         <label for="userPhone">Telefone:</label><br>
                         <input type="number" name="userPhone" id="userPhone" placeholder="Número de telefone"><br>
 
-                        <label for="userHeight">Altura:</label><span style="font-size:10px; color:red; margin:0px 5px 0px;">*</span><br>
+                        <label for="userHeight">Altura:</label> <span style="font-size:10px; color:red;">*</span><br>
                         <input type="number" name="userHeight" id="userHeight" placeholder="Sua altura" required><br>
                     </div>
                     <button id="submitRegister" value="submitRegister">Registrar</button>
