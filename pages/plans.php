@@ -15,6 +15,7 @@
             <div class="profile-link profile-button">
                 <i class="bi-person-circle"></i>
                 <div class="profile-link-content">
+                    <a href="plans.php"><i class="bi-list"></i> Planos</a>
                     <a href="login.php"><i class="bi-person-lines-fill"></i> Entrar</a>
                     <a href="register.php"><i class="bi-person-plus-fill"></i> Registrar</a>
                 </div>
@@ -26,26 +27,26 @@
             <button onclick="history.back()" class="back"><i class="bi-reply" title="Voltar"></i></button>
             <a href="logout.php" class="logout"><i class="bi-power" title="Sair"></i></a>
             <div class="container">
-                <h1>
+                <h3>
                     <div>PILATES</div>  
                     <div>R$ 300,00 ou 10 x 32,00</div>        
-                </h1>
+                </h3>
                 <button onclick="window.location.href='https://www.pilatesanytime.com/'">PILATES</button>
             </div><br>
 
             <div class="container">
-                <h1>
+                <h3>
                     <div>HIDROGINASTICA</div>
                     <div>R$ 280 OU 10 X 30,00</div>
-                </h1>
+                </h3>
                 <button onclick="window.location.href='https://blog.speedo.com.br/'">HIDROGINASTICA</button>
             </div><br>
 
             <div class="container">
-                <h1>
+                <h3>
                     <div>MUSCULAÇÃO</div>
                     <div>200,00 OU 10 X 22,00</div>
-                </h1>
+                </h3>
                 <button onclick="window.location.href='https://vitat.com.br/musculacao/'">MUSCULAÇÃO</button>
             </div><br>
         </div>

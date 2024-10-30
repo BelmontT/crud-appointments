@@ -83,6 +83,7 @@
             <div class="profile-link profile-button">
                 <i class="bi-person-circle"></i>
                 <div class="profile-link-content">
+                    <a href="plans.php"><i class="bi-list"></i> Planos</a>
                     <a href="login.php"><i class="bi-person-lines-fill"></i> Entrar</a>
                     <a href="register.php"><i class="bi-person-plus-fill"></i> Registrar</a>
                 </div>
