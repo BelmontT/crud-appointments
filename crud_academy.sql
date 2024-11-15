@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 4.6.6deb5ubuntu0.5
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Tempo de geração: 10-Out-2024 às 17:08
--- Versão do servidor: 10.4.32-MariaDB
--- versão do PHP: 8.2.12
+-- Host: localhost:3306
+-- Generation Time: 15-Nov-2024 às 17:58
+-- Versão do servidor: 10.1.48-MariaDB-0ubuntu0.18.04.1
+-- PHP Version: 7.2.24-0ubuntu0.18.04.17
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -18,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Banco de dados: `crud_academy`
+-- Database: `crud_academy`
 --
 
 -- --------------------------------------------------------
@@ -29,19 +28,10 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `accounts` (
   `account_id` int(11) NOT NULL,
-  `account_name` varchar(100) NOT NULL,
-  `account_passw` varchar(100) NOT NULL,
-  `account_created` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Extraindo dados da tabela `accounts`
---
-
-INSERT INTO `accounts` (`account_id`, `account_name`, `account_passw`, `account_created`) VALUES
-(1, 'emanuel', 'emanuel', '2024-10-05'),
-(2, 'teste', 'teste', '2024-10-05'),
-(3, 'test', 'testing', '2024-10-05');
+  `account_name` varchar(50) NOT NULL,
+  `account_passw` varchar(50) NOT NULL,
+  `account_created` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -51,17 +41,14 @@ INSERT INTO `accounts` (`account_id`, `account_name`, `account_passw`, `account_
 
 CREATE TABLE `appointments` (
   `appointments_id` int(11) NOT NULL,
-  `appointments_personal` varchar(45) NOT NULL,
-  `appointments_date` datetime NOT NULL,
-  `appointments_created` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Extraindo dados da tabela `appointments`
---
-
-INSERT INTO `appointments` (`appointments_id`, `appointments_personal`, `appointments_date`, `appointments_created`) VALUES
-(1, 'Cariani', '2024-10-05 12:34:19', '2024-10-05');
+  `appointments_personal` varchar(25) NOT NULL,
+  `appointments_date` date NOT NULL,
+  `appointments_hour` time DEFAULT NULL,
+  `appointments_training` varchar(75) NOT NULL,
+  `appointments_status` varchar(10) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `account_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -71,68 +58,74 @@ INSERT INTO `appointments` (`appointments_id`, `appointments_personal`, `appoint
 
 CREATE TABLE `users` (
   `user_id` int(11) NOT NULL,
+  `user_group` varchar(13) NOT NULL,
   `user_name` varchar(25) NOT NULL,
-  `user_group` varchar(50) NOT NULL,
   `user_date_birth` date NOT NULL,
+  `user_weight` int(11) NOT NULL,
+  `user_height` int(11) NOT NULL,
+  `user_phone` varchar(11) NOT NULL,
   `user_email` varchar(150) NOT NULL,
-  `user_phone` varchar(16) NOT NULL,
-  `account_id` int(11) NOT NULL,
-  `appointments_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `account_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Extraindo dados da tabela `users`
---
-
-INSERT INTO `users` (`user_id`, `user_name`, `user_group`, `user_date_birth`, `user_email`, `user_phone`, `account_id`, `appointments_id`) VALUES
-(1, 'Emanuel', 'Administrador', '0000-00-00', 'emanuel@gmail.com', '00912345678', 1, 1),
-(2, 'Testing Teste', 'Comum', '2024-10-05', 'test@gmail.com', '123456789', 2, 0),
-(3, 'Test Teta', 'Comum', '2024-10-05', 'gfd@gmail.com', '987654321', 3, 0);
-
---
--- Índices para tabelas despejadas
+-- Indexes for dumped tables
 --
 
 --
--- Índices para tabela `accounts`
+-- Indexes for table `accounts`
 --
 ALTER TABLE `accounts`
   ADD PRIMARY KEY (`account_id`);
 
 --
--- Índices para tabela `appointments`
+-- Indexes for table `appointments`
 --
 ALTER TABLE `appointments`
-  ADD PRIMARY KEY (`appointments_id`);
+  ADD PRIMARY KEY (`appointments_id`,`user_id`,`account_id`),
+  ADD KEY `fk_appointments_users1_idx` (`user_id`,`account_id`);
 
 --
--- Índices para tabela `users`
+-- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`user_id`);
+  ADD PRIMARY KEY (`user_id`,`account_id`),
+  ADD KEY `fk_users_accounts1_idx` (`account_id`);
 
 --
--- AUTO_INCREMENT de tabelas despejadas
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT de tabela `accounts`
+-- AUTO_INCREMENT for table `accounts`
 --
 ALTER TABLE `accounts`
-  MODIFY `account_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
+  MODIFY `account_id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT de tabela `appointments`
+-- AUTO_INCREMENT for table `appointments`
 --
 ALTER TABLE `appointments`
-  MODIFY `appointments_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
+  MODIFY `appointments_id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT de tabela `users`
+-- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-COMMIT;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Limitadores para a tabela `appointments`
+--
+ALTER TABLE `appointments`
+  ADD CONSTRAINT `fk_appointments_users1` FOREIGN KEY (`user_id`,`account_id`) REFERENCES `users` (`user_id`, `account_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Limitadores para a tabela `users`
+--
+ALTER TABLE `users`
+  ADD CONSTRAINT `fk_users_accounts1` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`account_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
