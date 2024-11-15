@@ -7,17 +7,16 @@
     if(!isset($_SESSION["account_id"])){
         header("Location: login.php");
         exit();
-    } else {
-        $data = $_SESSION['account_id'];
-        $queryAccount = ("SELECT * FROM accounts WHERE account_id = ' $data'");
-        $resultAccount = mysqli_query($conn, $queryAccount);
-        $account = mysqli_fetch_assoc($resultAccount);
-
-        $queryUser = ("SELECT * FROM users WHERE account_id = ' $data'");
-        $resultUser = mysqli_query($conn, $queryUser);
-        $user = mysqli_fetch_assoc($resultUser);
     }
-
+    
+    $data = $_SESSION['account_id'];
+    $queryAccount = ("SELECT * FROM accounts WHERE account_id = ' $data'");
+    $resultAccount = mysqli_query($conn, $queryAccount);
+    $account = mysqli_fetch_assoc($resultAccount);
+    
+    $queryUser = ("SELECT * FROM users WHERE account_id = ' $data'");
+    $resultUser = mysqli_query($conn, $queryUser);
+    $user = mysqli_fetch_assoc($resultUser);
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $updateFieldsUser = [];
         $updateFieldsAccount = [];
@@ -111,7 +110,7 @@
 
                     <label for="editPassw">Senha:</label>
                     <input type="password" name="editPassw" id="editPassw" placeholder="Nova Senha">
-                    <i id="eye-editPassw" class="bi-eye-fill" onclick="hideShow('editPassw', 'eye-editPass')"></i><br>
+                    <i id="eye-editPassw" class="bi-eye-fill" onclick="hideShow('editPassw', 'eye-editPassw')"></i><br>
                     <button id="formEdit">Alterar</button>
                 </form>     
             </div>

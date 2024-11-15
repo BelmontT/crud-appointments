@@ -1,47 +1,65 @@
 <?php
-    require_once($_SERVER['DOCUMENT_ROOT'] . '/database/db.php');
-    $message = "";
-    $messageClass = "";
+require_once($_SERVER['DOCUMENT_ROOT'] . '/database/db.php');
+$message = "";
+$messageClass = "";
 
-    session_start();
-    if($_SERVER["REQUEST_METHOD"] == "POST"){
-        $collectDataAccount = [];
-        $collectDataUser = [];
+session_start();
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+    $collectDataAccount = [];
+    $collectDataUser = [];
 
-        if(!empty($_POST["accountName"])){
-            $accountName = mysqli_real_escape_string($conn, $_POST["accountName"]);
-            $collectDataAccount[] = "accountName = '$accountName'";
-        }
-        if(!empty($_POST["password"])){
-            $password = mysqli_real_escape_string($conn, $_POST["password"]);
-            $collectDataAccount[] = "password = '$password'";
-        }
-        if(!empty($_POST["userName"]) && !empty($_POST["userSurname"])){
-            $userName = mysqli_real_escape_string($conn, $_POST["userName"] . ' ' . $_POST["userSurname"]);
-            $collectDataUser[] = "userName = '$userName'";
-        }
-        if(!empty($_POST["userEmail"])){
-            $userEmail = mysqli_real_escape_string($conn, $_POST["userEmail"]);
-            $collectDataUser[] = "userEmail = '$userEmail'";
-        }
-        if(!empty($_POST["userPhone"])){
-            $userPhone = mysqli_real_escape_string($conn, $_POST["userPhone"]);
-            $collectDataUser[] = "userPhone = '$userPhone'";
-        }
-        if(!empty($_POST["userWeight"])){
-            $userWeight = mysqli_real_escape_string($conn, $_POST["userWeight"]);
-            $collectDataUser[] = "userWeight = '$userWeight'";
-        }
-        if(!empty($_POST["userHeight"])){
-            $userHeight = mysqli_real_escape_string($conn, $_POST["userHeight"]);
-            $collectDataUser[] = "userHeight = '$userHeight'";
-        }
+    if(!empty($_POST["accountName"])){
+        $accountName = mysqli_real_escape_string($conn, $_POST["accountName"]);
+        $collectDataAccount[] = "accountName = '$accountName'";
+    }
+    if(!empty($_POST["password"])){
+        $password = mysqli_real_escape_string($conn, $_POST["password"]);
+        $collectDataAccount[] = "password = '$password'";
+    }
 
-        if(!empty($collectDataAccount) && !empty($collectDataUser)){
+    if(!empty($_POST["userName"]) && !empty($_POST["userSurname"])){
+        $userName = mysqli_real_escape_string($conn, $_POST["userName"] . ' ' . $_POST["userSurname"]);
+        $collectDataUser[] = "userName = '$userName'";
+    }
+    if(!empty($_POST["userBirth"])){
+        $userBirth = mysqli_real_escape_string($conn, $_POST["userBirth"]);
+        $collectDataUser[] = "userBirth = '$userBirth'";
+    }
+    if(!empty($_POST["userHeight"])){
+        $userHeight = mysqli_real_escape_string($conn, $_POST["userHeight"]);
+        $collectDataUser[] = "userHeight = '$userHeight'";
+    }
+    if(!empty($_POST["userWeight"])){
+        $userWeight = mysqli_real_escape_string($conn, $_POST["userWeight"]);
+        $collectDataUser[] = "userWeight = '$userWeight'";
+    }
+    if(!empty($_POST["userPhone"])){
+        $userPhone = mysqli_real_escape_string($conn, $_POST["userPhone"]);
+        $collectDataUser[] = "userPhone = '$userPhone'";
+    }
+    if(!empty($_POST["userEmail"])){
+        $userEmail = mysqli_real_escape_string($conn, $_POST["userEmail"]);
+        $collectDataUser[] = "userEmail = '$userEmail'";
+    }
+
+    if(!empty($collectDataAccount) && !empty($collectDataUser)){
+        $queryConsultAccount = "SELECT * FROM `accounts` WHERE `account_name` = '$accountName'";
+        $resultAccount = mysqli_query($conn, $queryConsultAccount);
+
+        $queryConsultEmail = "SELECT * FROM `users` WHERE `user_email` = '$userEmail'";
+        $resultEmail = mysqli_query($conn, $queryConsultEmail);
+
+        if(mysqli_num_rows($resultAccount) > 0){
+            $message = "Este nome de usuário já está em uso. Por favor, escolha outro.";
+            $messageClass = "boxError";
+        } elseif(mysqli_num_rows($resultEmail) > 0) {
+            $message = "Este e-mail já está em uso. Por favor, utilize outro.";
+            $messageClass = "boxError";
+        } else {
             $queryRegisterAccount = "INSERT INTO accounts (`account_name`, `account_passw`, `account_created`) VALUES ('$accountName', '$password', NOW())";
             if(mysqli_query($conn, $queryRegisterAccount)){
                 $accountID = mysqli_insert_id($conn);
-                $queryRegisterUser = "INSERT INTO users (`user_name`, `user_group`, `user_date_birth`, `user_email`, `user_phone`, `account_id`) VALUES ('$userName', 'Comum', NOW(), '$userEmail', '$userPhone', '$accountID')";
+                $queryRegisterUser = "INSERT INTO users (`user_group`, `user_name`, `user_date_birth`, `user_weight`, `user_height`, `user_phone`, `user_email`, `account_id`) VALUES ('Usuário', '$userName', '$userBirth', '$userWeight', '$userHeight', '$userPhone', '$userEmail', '$accountID')";
                 if(mysqli_query($conn, $queryRegisterUser)){         
                     $message = "Sua conta foi criada com sucesso!";
                     $messageClass = "boxSuccess";
@@ -54,11 +72,12 @@
                 $message = "Algo deu errado ao cadastrar a conta, mensagem do erro: " . mysqli_error($conn);
                 $messageClass = "boxError";
             }
-        } else {
-            $message = "Sua conta não foi criada, verifique os campos ou contate um Administrador!";
-            $messageClass = "boxWarning";
         }
+    } else {
+        $message = "Sua conta não foi criada, verifique os campos ou contate um Administrador!";
+        $messageClass = "boxWarning";
     }
+}
 ?>
 
 <html lang="pt-BR">
@@ -85,8 +104,13 @@
             </div>
         </div>
     </header>
-    <body>
+    <body onload="hideMessage()">
         <div class="contentDiv">
+            <?php if(!empty($message)): ?>
+                <div id="messageBox" class="<?php echo $messageClass; ?>">
+                    <?php echo $message; ?>
+                </div>
+            <?php endif; ?>
             <button onclick="history.back()" class="back"><i class="bi-reply" title="Voltar"></i></button>
             <img src="../layout/images/profile_register.png" class="image-profile">
             <div class="contentRegister">
@@ -94,7 +118,7 @@
                 <form action="" method="POST">
                     <div class="contentRegisterRight">
                         <label for="accountName">Usuário:</label> <span style="font-size:10px; color:red;">*</span><br>
-                        <input type="text" name="accountName" id="accountName" placeholder="Conta" required><br>
+                        <input type="text" name="accountName" id="accountName" placeholder="Conta" ><br>
 
                         <label for="userName">Nome:</label> <span style="font-size:10px; color:red;">*</span><br>
                         <input type="text" name="userName" id="userName" placeholder="Primeiro Nome" required><br>
@@ -115,7 +139,7 @@
                         <input type="text" name="userSurname" id="userSurname" placeholder="Último Nome" required><br>
 
                         <label for="userPhone">Telefone:</label><br>
-                        <input type="number" name="userPhone" id="userPhone" placeholder="Número de telefone"><br>
+                        <input type="number" name="userPhone" id="userPhone" placeholder="Número de telefone" required><br>
 
                         <label for="userHeight">Altura:</label> <span style="font-size:10px; color:red;">*</span><br>
                         <input type="number" name="userHeight" id="userHeight" placeholder="Sua altura" required><br>

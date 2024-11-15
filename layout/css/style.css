@@ -253,11 +253,11 @@ body{
 }
 
 .tableAccount {
-    margin-left: 20%;
+    margin-left: 25%;
 }
 
 .tableAppointments {
-    margin-left: 20%;
+    margin-left: 25%;
 }
 
 .tableAccount thead, .tableAppointments thead{
@@ -315,6 +315,31 @@ button:hover{
     border-radius:5px;
     padding:8px 0 8px;
     text-align:center;
+}
+
+.container {
+    padding:20px;
+    text-align:center;
+    border-radius:10px;
+    background-color:rgba(35, 32, 32, 0.5);
+}
+.container:hover{
+    background-color:rgba(35, 32, 32, 0.8);
+}
+
+.container button {
+    background-color:#007BFF;
+    color:white;
+    border:none;
+    border-radius:10px;
+    padding:10px 20px;
+    margin:10px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+.container button:hover {
+    background-color: #0056b3;
 }
 
 .footer{

@@ -1,5 +1,71 @@
 <?php
-    require_once($_SERVER["DOCUMENT_ROOT"] . "/database/db.php");
+require_once($_SERVER["DOCUMENT_ROOT"] . "/database/db.php");
+
+$message = "";
+$messageClass = "";
+
+session_start();
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $colectDataAppointments = [];
+    $user_id = $_SESSION['user_id'] ?? null;
+    $account_id = $_SESSION['account_id'] ?? null;
+
+    $queryUser = "SELECT * FROM users WHERE account_id = '$account_id' LIMIT 1";
+    $resultUser = mysqli_query($conn, $queryUser);
+        
+    if ($resultUser && mysqli_num_rows($resultUser) > 0) {
+        $userData = mysqli_fetch_assoc($resultUser);
+        $user_id = $userData['user_id'];
+        $account_id = $userData['account_id'];
+    } else {
+        $message = "Não foi possível encontrar o ID do usuário. Tente novamente.";
+        $messageClass = "boxError";
+    }
+
+    if (!$user_id || !$account_id) {
+        $message = "Erro ao identificar o usuário ou a conta. Faça login novamente.";
+        $messageClass = "boxError";
+    } else {
+        if (!empty($_POST["appo_Personal"])) {
+            $appo_Personal = mysqli_real_escape_string($conn, $_POST["appo_Personal"]);
+            $colectDataAppointments[] = "appo_Personal = '$appo_Personal'";
+        }
+        if (!empty($_POST["appo_Date"])) {
+            $appo_Date = mysqli_real_escape_string($conn, $_POST["appo_Date"]);
+            $colectDataAppointments[] = "appo_Date = '$appo_Date'";
+        }
+        if (!empty($_POST["appo_Time"])) {
+            $appo_Time = $_POST["appo_Time"];
+            if (preg_match('/^([01]\d|2[0-3]):([0-5]\d)$/', $appo_Time)) {
+                $appo_Time = mysqli_real_escape_string($conn, $appo_Time);
+                $colectDataAppointments[] = "appo_Time = '$appo_Time'";
+            } else {
+                $message = "Horário inválido.";
+                $messageClass = "boxError";
+            }
+        }        
+        if (!empty($_POST["appo_Training"])) {
+            $appo_Training = mysqli_real_escape_string($conn, $_POST["appo_Training"]);
+            $colectDataAppointments[] = "appo_Training = '$appo_Training'";
+        }
+
+        if (!empty($colectDataAppointments)) {
+            $query = "INSERT INTO `appointments` (`appointments_personal`, `appointments_date`, `appointments_hour`, `appointments_training`, `appointments_status`, `user_id`, `account_id`) VALUES ('$appo_Personal', '$appo_Date', '$appo_Time', '$appo_Training', 'Pendente', '$user_id', '$account_id')";
+            $queryExecute = mysqli_query($conn, $query);
+
+            if ($queryExecute) {
+                $message = "Você acabou de realizar um agendamento, aguarde até que o instrutor aceite.";
+                $messageClass = "boxSuccess";
+            } else {
+                $message = "Houve um erro no seu agendamento. " . mysqli_error($conn);
+                $messageClass = "boxError";
+            }
+        } else {
+            $message = "Você não preencheu todos os dados, volte e refaça o seu agendamento.";
+            $messageClass = "boxWarning";
+        }
+    }
+}
 ?>
 
 <html lang="pt-BR">
@@ -37,18 +103,18 @@
             <a href="../logout.php" class="logout"><i class="bi-power" title="Sair"></i></a>
 
             <div class="newAppointments">
-                <form action="" method="POST">
+                <form method="POST">
                     <label for="appo_Personal">Personal:</label> <span style="color:red; font-size:10px;">*</span><br>
                     <select name="appo_Personal">
-                        <option value=""></option>
+                        <option value="">Selecione</option>
                         <?php
-                        $query = "SELECT account_id, user_name FROM users WHERE user_group = 2";
+                        $query = "SELECT account_id, user_name FROM users WHERE user_group = 'Personal'";
                         $result = mysqli_query($conn, $query);
                         
                         while($listUsers = mysqli_fetch_assoc($result)):
                         ?>
                         
-                        <option value="<?php echo $listUsers['account_id']; ?>">
+                        <option value="<?php echo htmlspecialchars($listUsers['user_name']); ?>">
                             <?php echo htmlspecialchars($listUsers['user_name']); ?>
                         </option>
                         <?php endwhile; ?>
@@ -62,7 +128,7 @@
 
                     <label for="appo_Training">Tipo de Treino:</label> <span style="color:red; font-size:10px;">*</span><br>
                     <select name="appo_Training">
-                        <option value=""></option>
+                        <option value="choose">Selecione</option>
                         <option value="hiit">HIIT</option>
                         <option value="strength">Força</option>
                         <option value="resistance">Resistência</option>
@@ -71,7 +137,7 @@
                         <option value="cardiorespiratory">Cardiorrespiratório</option>
                     </select><br><br>
 
-                    <button type="submit" name="appo_Create">Agendar</button>
+                    <button id="appo_Create" name="appo_Create">Agendar</button>
                 </form>
             </div>
         </div>

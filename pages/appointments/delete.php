@@ -1,5 +1,27 @@
 <?php
-    require_once($_SERVER['DOCUMENT_ROOT'] . '/database/db.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/database/db.php');
+session_start();
+
+if (!isset($_SESSION["account_id"])) {
+    header("Location: ../login.php");
+    exit();
+}
+
+if (isset($_GET['id']) && !empty($_GET['id'])) {
+    $appointmentId = intval($_GET['id']);
+    $query = "DELETE FROM appointments WHERE appointments_id = $appointmentId";
+    if (mysqli_query($conn, $query)) {
+        $message = "Agendamento deletado com sucesso!";
+        $messageClass = "boxSuccess";
+        header("Location: ../account.php");
+    } else {
+        $message = "Erro ao deletar o agendamento: " . mysqli_error($conn);
+        $messageClass = "boxError";
+    }
+} else {
+    $message = "ID do agendamento não fornecido!";
+    $messageClass = "boxWarning";
+}
 ?>
 
 <html lang="pt-BR">
@@ -36,9 +58,6 @@
             <button onclick="history.back()" class="back"><i class="bi-reply" title="Voltar"></i></button>
             <a href="../logout.php" class="logout"><i class="bi-power" title="Sair"></i></a>
         </div>
-        <script>
-            alert("Tem certeza que deseja apagar o agendamento?");
-        </script>
     </body>
     <div class="footer">
         © Todos os direitos reservados.

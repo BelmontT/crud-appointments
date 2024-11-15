@@ -5,13 +5,12 @@
     if(!isset($_SESSION["account_id"])){
         header("Location: login.php");
         exit();
-    } else {
-        $data = $_SESSION['account_id'];
-        $query = ("SELECT * FROM users WHERE account_id = '$data'");
-        $result = mysqli_query($conn, $query);
-        $user = mysqli_fetch_assoc($result);
     }
-
+    
+    $data = $_SESSION['account_id'];
+    $query = ("SELECT * FROM users WHERE account_id = '$data'");
+    $result = mysqli_query($conn, $query);
+    $user = mysqli_fetch_assoc($result);
     if($_SERVER["REQUEST_METHOD"] == "POST"){
         $user_id = $_POST["user_id"];
         $new_group = $_POST["user_group"];
@@ -74,7 +73,6 @@
                 <thead>
                     <tr>
                         <th>Nome</th>
-                        <th>Data de Nascimento</th>
                         <th>E-mail</th>
                         <th>Telefone</th>
                         <th>Ação</th>
@@ -83,7 +81,6 @@
                 <tbody>
                     <tr>
                         <td><?php echo htmlspecialchars($user["user_name"]);?></td>
-                        <td><?php echo htmlspecialchars($user["user_date_birth"]);?></td>
                         <td><?php echo htmlspecialchars($user["user_email"]);?></td>
                         <td><?php echo htmlspecialchars($user["user_phone"]);?></td>
                         <td><a href="edit.php"><i class="bi-pencil" style="color:white;"></i></a></td>
@@ -97,6 +94,7 @@
                     <thead>
                         <tr>
                             <th>Aluno</th>
+                            <th>Personal</th>
                             <th>Data</th>
                             <th>Horário</th>
                             <th>Treino</th>
@@ -106,17 +104,39 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Emanuel</td>
-                            <td>01/10/2024</td>
-                            <td>22:30</td>
-                            <td>Perder KG</td>
-                            <td>Pendente</td>
-                            <td>
-                                <a href="appointments/confirm.php"><i class="bi-check" style="color:green; font-size:20px;"></i></a>
-                                <a href="appointments/cancel.php"><i class="bi-x" style="color:red; font-size:20px;"></i></a>
-                                <a href="appointments/delete.php"><i class="bi-trash" style="color:white; font-size:15px;"></i></a>
-                                <a href="appointments/edit.php"><i class="bi-pencil-square" style="color:white; font-size:15px; margin-left:4px;"></i></a>
-                            </td>
+                        <?php
+                            $appointments = "SELECT a.*, u.user_name AS student_name, p.user_name AS personal_name FROM appointments a LEFT JOIN users u ON a.user_id = u.user_id LEFT JOIN users p ON a.appointments_personal = p.user_name";
+                            $queryExecute = mysqli_query($conn, $appointments);
+
+                            if ($queryExecute && mysqli_num_rows($queryExecute) > 0) {
+                                while ($row = mysqli_fetch_assoc($queryExecute)) {
+                                    echo "<tr>";
+                                    echo "<td>" . htmlspecialchars($row["student_name"]) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row["personal_name"]) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row["appointments_date"]) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row["appointments_hour"]) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row["appointments_training"]) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row["appointments_status"]) . "</td>";
+                                    echo "<td>
+                                            <a href='appointments/confirm.php?id=" . $row["appointments_id"] . "'>
+                                                <i class='bi-check' style='color:green; font-size:20px;'></i>
+                                            </a>
+                                            <a href='appointments/cancel.php?id=" . $row["appointments_id"] . "'>
+                                                <i class='bi-x' style='color:red; font-size:20px;'></i>
+                                            </a>
+                                            <a href='appointments/delete.php?id=" . $row["appointments_id"] . "'>
+                                                <i class='bi-trash' style='color:white; font-size:15px;'></i>
+                                            </a>
+                                            <a href='appointments/edit.php?id=" . $row["appointments_id"] . "'>
+                                                <i class='bi-pencil-square' style='color:white; font-size:15px; margin-left:4px;'></i>
+                                            </a>
+                                        </td>";
+                                    echo "</tr>";
+                                }
+                            } else {
+                                echo "<tr><td colspan='7'>Nenhum agendamento encontrado.</td></tr>";
+                            }
+                            ?>
                         </tr>
                     </tbody>
                 </table><br>
@@ -139,8 +159,8 @@
                 
                     <select name="user_group">
                         <option value="">Cargo</option>
-                        <option value="1">Usuário</option>
-                        <option value="2">Personal</option>
+                        <option value="Usuario">Usuário</option>
+                        <option value="Personal">Personal</option>
                     </select>
                 
                     <button type="submit">Atribuir</button>
@@ -158,19 +178,37 @@
                             <th>Status</th>
                             <th>Ação</th>
                         </tr>
+
+                        <?php
+                            $appointments = "SELECT a.*, u.user_name AS student_name FROM appointments a LEFT JOIN users u ON a.user_id = u.user_id WHERE a.appointments_personal = '{$user['user_name']}'";
+                            $queryExecute = mysqli_query($conn, $appointments);
+                            if ($queryExecute && mysqli_num_rows($queryExecute) > 0) {
+                                while ($row = mysqli_fetch_assoc($queryExecute)) {
+                                    echo "<tr>";
+                                    echo "<td>" . htmlspecialchars($row["student_name"]) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row["appointments_date"]) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row["appointments_hour"]) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row["appointments_training"]) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row["appointments_status"]) . "</td>";
+                                    echo "<td>
+                                            <a href='appointments/confirm.php?id=" . $row["appointments_id"] . "'>
+                                                <i class='bi-check' style='color:green; font-size:20px;'></i>
+                                            </a>
+                                            <a href='appointments/cancel.php?id=" . $row["appointments_id"] . "'>
+                                                <i class='bi-x' style='color:red; font-size:20px;'></i>
+                                            </a>
+                                            <a href='appointments/edit.php?id=" . $row["appointments_id"] . "'>
+                                                <i class='bi-pencil-square' style='color:white; font-size:15px; margin-left:4px;'></i>
+                                            </a>
+                                        </td>";
+                                    echo "</tr>";
+                                }
+                            }
+                             else {
+                                echo "<tr><td colspan='5'>Nenhum agendamento encontrado.</td></tr>";
+                            }
+                        ?>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>Emanuel</td>
-                            <td>01/10/2024</td>
-                            <td>22:30</td>
-                            <td>Perder KG</td>
-                            <td>Pendente</td>
-                            <td><a href="appointments/confirm.php"><i class="bi-check" style="color:green; font-size:20px;"></i></a>
-                            <a href="appointments/cancel.php"><i class="bi-x" style="color:red; font-size:20px;"></i></a>
-                            <a href="appointments/delete.php"><i class="bi-trash" style="color:white; font-size:15px;"></i></a></td>
-                        </tr>
-                    </tbody>
                 </table>
 
             <?php else: ?>
@@ -183,19 +221,26 @@
                             <th>Horário</th>
                             <th>Treino</th>
                             <th>Status</th>
-                            <th>Baixar</th>
                         </tr>
+
+                        <?php
+                            $appointments = "SELECT * FROM appointments WHERE user_id = '$user[user_id]'";
+                            $queryExecute = mysqli_query($conn, $appointments);
+                            if ($queryExecute && mysqli_num_rows($queryExecute) > 0) {
+                                while ($row = mysqli_fetch_assoc($queryExecute)) {
+                                    echo "<tr>";
+                                    echo "<td>" . htmlspecialchars($row["appointments_personal"]) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row["appointments_date"]) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row["appointments_hour"]) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row["appointments_training"]) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row["appointments_status"]) . "</td>";
+                                    echo "</tr>";
+                                }
+                            } else {
+                                echo "<tr><td colspan='5'>Nenhum agendamento encontrado.</td></tr>";
+                            }
+                        ?>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>Belmont</td>
-                            <td>01/10/2024</td>
-                            <td>22:30</td>
-                            <td>Perder KG</td>
-                            <td>Pendente</td>
-                            <td><a href="download.php"><i class="bi-file-earmark-arrow-down" style="color:white;"></i></a></td>
-                        </tr>
-                    </tbody>
                 </table><br>
 
                 <center><a href="appointments/create.php"><button>Novo Agendamento</button></a></center>

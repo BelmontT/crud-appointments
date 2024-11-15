@@ -25,7 +25,6 @@
     <body>
         <div class="contentDiv">
             <button onclick="history.back()" class="back"><i class="bi-reply" title="Voltar"></i></button>
-            <a href="logout.php" class="logout"><i class="bi-power" title="Sair"></i></a>
             <div class="container">
                 <h3>
                     <div>PILATES</div>  
